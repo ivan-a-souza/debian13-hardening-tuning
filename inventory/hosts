@@ -1,0 +1,2 @@
+[debian_production]
+my-server ansible_host=YOUR.IP.HERE ansible_user=YOUR_USER
