@@ -1,0 +1,19 @@
+---
+- name: Install UFW
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+  when: hardening_firewall_enable | bool
+
+- name: Allow SSH Port in UFW
+  community.general.ufw:
+    rule: allow
+    port: "{{ hardening_ssh_port | string }}"
+    proto: tcp
+  when: hardening_firewall_enable | bool
+
+- name: Enable UFW and set default deny
+  community.general.ufw:
+    state: enabled
+    policy: deny
+  when: hardening_firewall_enable | bool

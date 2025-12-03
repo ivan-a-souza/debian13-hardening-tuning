@@ -9,3 +9,6 @@ hardening_ssh_port: 2222
 
 # System Updates
 hardening_update_packages: true
+
+# Firewall
+hardening_firewall_enable: true

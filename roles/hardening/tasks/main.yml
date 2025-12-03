@@ -4,3 +4,6 @@
 
 - name: Configure SSH Hardening
   ansible.builtin.include_tasks: ssh.yml
+
+- name: Configure Firewall
+  ansible.builtin.include_tasks: firewall.yml
