@@ -35,6 +35,9 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_ssh_disable_password` | `true` | Disables password authentication (`PasswordAuthentication no`). |
 | `hardening_ssh_configure_port` | `false` | Enables changing the SSH port. |
 | `hardening_ssh_port` | `2222` | The new SSH port to use (requires `hardening_ssh_configure_port: true`). |
+| `hardening_ssh_allow_users` | `[]` | List of users allowed to log in via SSH. Automatically includes `hardening_user_name` if user creation is enabled. |
+| `hardening_ssh_login_grace_time` | `30` | Time in seconds to disconnect if not authenticated. |
+| `hardening_ssh_max_auth_tries` | `3` | Maximum number of authentication attempts. |
 | `hardening_firewall_enable` | `true` | Installs UFW, allows SSH port, and enables the firewall. |
 | `hardening_unattended_upgrades_enable` | `true` | Installs and configures unattended-upgrades for automatic security updates. |
 | `hardening_user_create` | `false` | Creates a new user with sudo privileges. |
@@ -63,13 +66,13 @@ To securely manage SSH keys for the new user:
 
 - [x] Initial project setup (directory structure, inventory).
 - [ ] Creation of Hardening roles:
-    - [x] Configuração de SSH (desabilitar root, alterar porta, chaves apenas).
+    - [x] SSH Configuration (disable root, change port, keys only).
     - [x] Firewall (UFW/NFTables).
-    - [x] Atualizações automáticas (unattended-upgrades).
-    - [ ] Configurações de Kernel (sysctl).
+    - [x] Automatic Updates (unattended-upgrades).
+    - [ ] Kernel Configurations (sysctl).
 - [ ] Creation of Tuning roles:
-    - [ ] Otimização de I/O.
-    - [ ] Otimização de Rede.
+    - [ ] I/O Optimization.
+    - [ ] Network Optimization.
 - [ ] Tests and Validation.
 
 ## 🛠️ How to Execute

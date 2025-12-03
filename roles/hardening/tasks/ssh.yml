@@ -48,3 +48,40 @@
     validate: 'sshd -t -f %s'
   notify: Restart SSH
   when: hardening_ssh_configure_port | bool
+
+- name: Enforce SSH Protocol 2
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Protocol'
+    line: 'Protocol 2'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+
+- name: Set SSH LoginGraceTime
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^LoginGraceTime'
+    line: "LoginGraceTime {{ hardening_ssh_login_grace_time }}"
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+
+- name: Set SSH MaxAuthTries
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^MaxAuthTries'
+    line: "MaxAuthTries {{ hardening_ssh_max_auth_tries }}"
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+
+- name: Configure AllowUsers
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^AllowUsers'
+    line: "AllowUsers {{ (hardening_ssh_allow_users + ([hardening_user_name] if hardening_user_create else [])) | unique | join(' ') }}"
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+  when: (hardening_ssh_allow_users | length > 0) or hardening_user_create

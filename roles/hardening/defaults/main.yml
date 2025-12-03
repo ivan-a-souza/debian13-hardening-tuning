@@ -6,6 +6,9 @@ hardening_ssh_disable_root: true
 hardening_ssh_disable_password: true
 hardening_ssh_configure_port: false
 hardening_ssh_port: 2222
+hardening_ssh_allow_users: []
+hardening_ssh_login_grace_time: 30
+hardening_ssh_max_auth_tries: 3
 
 # System Updates
 hardening_update_packages: true
