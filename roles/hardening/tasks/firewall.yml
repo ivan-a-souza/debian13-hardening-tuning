@@ -12,8 +12,19 @@
     proto: tcp
   when: hardening_firewall_enable | bool
 
-- name: Enable UFW and set default deny
+- name: Set default deny incoming policy
+  community.general.ufw:
+    direction: incoming
+    policy: deny
+  when: hardening_firewall_enable | bool
+
+- name: Set default allow outgoing policy
+  community.general.ufw:
+    direction: outgoing
+    policy: allow
+  when: hardening_firewall_enable | bool
+
+- name: Enable UFW
   community.general.ufw:
     state: enabled
-    policy: deny
   when: hardening_firewall_enable | bool
