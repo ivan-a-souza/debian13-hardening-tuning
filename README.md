@@ -1,46 +1,46 @@
 # Debian 13 Hardening & Tuning Playbook
 
-Este projeto tem como objetivo criar um playbook do Ansible para realizar o hardening (segurança) e tuning (otimização de performance) em servidores **Debian 13 (Trixie)**.
+This project aims to create an Ansible playbook to perform hardening (security) and tuning (performance optimization) on **Debian 13 (Trixie)** servers.
 
-## 🎯 Escopo
+## 🎯 Scope
 
-Este playbook é focado especificamente em:
-- **Sistema Operacional**: Debian 13 (Trixie).
-- **Hardening**: Implementação de práticas de segurança (CIS, STIG) para reduzir a superfície de ataque.
-- **Tuning**: Ajustes de kernel e serviços para otimização de performance.
+This playbook is specifically focused on:
+- **Operating System**: Debian 13 (Trixie).
+- **Hardening**: Implementation of security practices (CIS, STIG) to reduce the attack surface.
+- **Tuning**: Kernel and service adjustments for performance optimization.
 
-## ⚠️ Avisos de Risco (Disclaimer)
+## ⚠️ Risk Warnings (Disclaimer)
 
 > [!WARNING]
-> **Atenção**: A aplicação de regras de hardening pode ser restritiva e **quebrar a compatibilidade** com aplicações existentes.
+> **Attention**: Applying hardening rules can be restrictive and **break compatibility** with existing applications.
 
-- **Teste antes de aplicar**: Nunca execute este playbook diretamente em produção sem antes validar em um ambiente de homologação.
-- **Acesso SSH**: Algumas regras podem alterar configurações de SSH. Certifique-se de ter um método de acesso alternativo (console/VNC) caso perca a conexão.
-- **Backup**: Sempre tenha backups atualizados antes de aplicar mudanças estruturais no sistema.
+- **Test before applying**: Never run this playbook directly in production without first validating it in a staging environment.
+- **SSH Access**: Some rules may change SSH configurations. Ensure you have an alternative access method (console/VNC) in case you lose connection.
+- **Backup**: Always have up-to-date backups before applying structural changes to the system.
 
-## 📋 Requisitos
+## 📋 Requirements
 
-- Ansible instalado na máquina de controle.
-- Acesso SSH ao(s) servidor(es) alvo rodando Debian 13.
-- Privilégios de root ou sudo no servidor alvo.
+- Ansible installed on the control machine.
+- SSH access to the target server(s) running Debian 13.
+- Root or sudo privileges on the target server.
 
 ## 🚀 Roadmap
 
-- [ ] Configuração inicial do projeto (estrutura de diretórios, inventory).
-- [ ] Criação de roles para Hardening:
-    - [ ] Configuração de SSH (desabilitar root, alterar porta, chaves apenas).
+- [ ] Initial project setup (directory structure, inventory).
+- [ ] Creation of Hardening roles:
+    - [ ] SSH Configuration (disable root, change port, keys only).
     - [ ] Firewall (UFW/NFTables).
-    - [ ] Atualizações automáticas (unattended-upgrades).
-    - [ ] Configurações de Kernel (sysctl).
-- [ ] Criação de roles para Tuning:
-    - [ ] Otimização de I/O.
-    - [ ] Otimização de Rede.
-- [ ] Testes e Validação.
+    - [ ] Automatic Updates (unattended-upgrades).
+    - [ ] Kernel Configurations (sysctl).
+- [ ] Creation of Tuning roles:
+    - [ ] I/O Optimization.
+    - [ ] Network Optimization.
+- [ ] Tests and Validation.
 
-## 🛠️ Como Executar
+## 🛠️ How to Execute
 
-### 1. Configurar Inventário
-Edite o arquivo `inventory/hosts` (ou similar) com os IPs dos seus servidores:
+### 1. Configure Inventory
+Edit the `inventory/hosts` file (or similar) with the IPs of your servers:
 
 ```ini
 [debian_servers]
@@ -48,27 +48,27 @@ Edite o arquivo `inventory/hosts` (ou similar) com os IPs dos seus servidores:
 192.168.1.11
 ```
 
-### 2. Executar em modo Dry-Run (Simulação)
-Sempre execute primeiro em modo de verificação para ver o que será alterado sem aplicar as mudanças:
+### 2. Run in Dry-Run Mode (Simulation)
+Always run first in check mode to see what will be changed without applying the changes:
 
 ```bash
 ansible-playbook -i inventory/hosts site.yml --check --diff
 ```
 
-### 3. Executar o Playbook
-Para aplicar as configurações:
+### 3. Run the Playbook
+To apply the configurations:
 
 ```bash
 ansible-playbook -i inventory/hosts site.yml
 ```
 
-### 4. Usando Tags
-Você pode rodar apenas partes específicas do playbook usando tags (ex: apenas hardening ou apenas ssh):
+### 4. Using Tags
+You can run only specific parts of the playbook using tags (e.g., only hardening or only ssh):
 
 ```bash
-# Rodar apenas tarefas de hardening
+# Run only hardening tasks
 ansible-playbook -i inventory/hosts site.yml --tags "hardening"
 
-# Rodar apenas configuração de SSH
+# Run only SSH configuration
 ansible-playbook -i inventory/hosts site.yml --tags "ssh"
 ```
