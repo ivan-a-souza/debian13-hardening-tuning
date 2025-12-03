@@ -90,6 +90,9 @@ To securely manage SSH keys for the new user:
     - [x] Firewall (UFW/NFTables).
     - [x] Automatic Updates (unattended-upgrades).
     - [x] Kernel Configurations (sysctl).
+    - [x] Intrusion Prevention (Fail2Ban).
+    - [x] Mail Transfer Agent (Postfix).
+    - [x] File System Permissions.
 - [ ] Creation of Tuning roles:
     - [ ] I/O Optimization.
     - [ ] Network Optimization.
