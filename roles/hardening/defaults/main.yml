@@ -12,3 +12,6 @@ hardening_update_packages: true
 
 # Firewall
 hardening_firewall_enable: true
+
+# Unattended Upgrades
+hardening_unattended_upgrades_enable: true

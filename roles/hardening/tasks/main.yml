@@ -7,3 +7,6 @@
 
 - name: Configure Firewall
   ansible.builtin.include_tasks: firewall.yml
+
+- name: Configure Unattended Upgrades
+  ansible.builtin.include_tasks: unattended_upgrades.yml

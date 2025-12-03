@@ -36,6 +36,7 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_ssh_configure_port` | `false` | Enables changing the SSH port. |
 | `hardening_ssh_port` | `2222` | The new SSH port to use (requires `hardening_ssh_configure_port: true`). |
 | `hardening_firewall_enable` | `true` | Installs UFW, allows SSH port, and enables the firewall. |
+| `hardening_unattended_upgrades_enable` | `true` | Installs and configures unattended-upgrades for automatic security updates. |
 
 ## 🚀 Roadmap
 
@@ -43,7 +44,7 @@ You can customize the playbook behavior using the following variables in `roles/
 - [ ] Creation of Hardening roles:
     - [x] Configuração de SSH (desabilitar root, alterar porta, chaves apenas).
     - [x] Firewall (UFW/NFTables).
-    - [x] Atualizações automáticas (unattended-upgrades) - *Partially implemented (manual update task)*.
+    - [x] Atualizações automáticas (unattended-upgrades).
     - [ ] Configurações de Kernel (sysctl).
 - [ ] Creation of Tuning roles:
     - [ ] Otimização de I/O.
