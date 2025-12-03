@@ -64,6 +64,7 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_postfix_tls_ca_file` | `/etc/ssl/certs/ca-certificates.crt` | Path to CA certificates file. |
 | `hardening_sysctl_enable` | `true` | Enables kernel hardening via sysctl. |
 | `hardening_sysctl_settings` | `{...}` | Dictionary of sysctl parameters (see defaults for full list). |
+| `hardening_permissions_enable` | `true` | Enforces secure permissions on critical system files and directories. |
 
 ## 🔑 SSH Key Management
 

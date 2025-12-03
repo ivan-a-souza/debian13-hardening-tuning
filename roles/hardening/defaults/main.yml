@@ -88,3 +88,6 @@ hardening_sysctl_settings:
   "kernel.randomize_va_space": 2
   "fs.suid_dumpable": 0
   "kernel.sysrq": 0
+
+# File Permissions
+hardening_permissions_enable: true

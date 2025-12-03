@@ -1,0 +1,71 @@
+---
+- name: Secure /etc/shadow
+  ansible.builtin.file:
+    path: /etc/shadow
+    owner: root
+    group: shadow
+    mode: '0640'
+  when: hardening_permissions_enable | bool
+
+- name: Secure /etc/gshadow
+  ansible.builtin.file:
+    path: /etc/gshadow
+    owner: root
+    group: shadow
+    mode: '0640'
+  when: hardening_permissions_enable | bool
+
+- name: Secure /etc/passwd
+  ansible.builtin.file:
+    path: /etc/passwd
+    owner: root
+    group: root
+    mode: '0644'
+  when: hardening_permissions_enable | bool
+
+- name: Secure /etc/ssh/sshd_config
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: '0600'
+  when: hardening_permissions_enable | bool
+
+- name: Secure /root directory
+  ansible.builtin.file:
+    path: /root
+    owner: root
+    group: root
+    mode: '0700'
+  when: hardening_permissions_enable | bool
+
+- name: Secure /etc/sudoers
+  ansible.builtin.file:
+    path: /etc/sudoers
+    owner: root
+    group: root
+    mode: '0440'
+  when: hardening_permissions_enable | bool
+
+- name: Secure /var/log directory (Recursive)
+  ansible.builtin.file:
+    path: /var/log
+    owner: root
+    group: adm
+    mode: '0750'
+    recurse: true
+  when: hardening_permissions_enable | bool
+
+- name: Ensure sticky bit on /tmp
+  ansible.builtin.file:
+    path: /tmp
+    state: directory
+    mode: '1777'
+  when: hardening_permissions_enable | bool
+
+- name: Ensure sticky bit on /var/tmp
+  ansible.builtin.file:
+    path: /var/tmp
+    state: directory
+    mode: '1777'
+  when: hardening_permissions_enable | bool

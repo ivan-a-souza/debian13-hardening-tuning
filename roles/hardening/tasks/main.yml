@@ -22,3 +22,6 @@
 
 - name: Configure Sysctl Hardening
   ansible.builtin.include_tasks: sysctl.yml
+
+- name: Configure File Permissions
+  ansible.builtin.include_tasks: permissions.yml
