@@ -47,6 +47,21 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_user_password` | `""` | Password hash for the new user (Required if create is true). |
 | `hardening_sudo_require_password` | `true` | Ensures sudo requires a password (`%sudo ALL=(ALL:ALL) ALL`). |
 | `hardening_user_ssh_key_path` | `ssh/id_ed25519.pub` | Path to the public key to be added to the user's authorized_keys. |
+| `hardening_fail2ban_enable` | `true` | Installs and configures Fail2Ban to protect SSH. |
+| `hardening_fail2ban_maxretry` | `3` | Number of failures before banning. |
+| `hardening_fail2ban_findtime` | `1h` | Time window to count failures. |
+| `hardening_fail2ban_bantime` | `10m` | Duration of the ban. |
+| `hardening_fail2ban_email_enable` | `false` | Enables email alerts for bans (requires MTA). |
+| `hardening_postfix_enable` | `true` | Installs and configures Postfix as a relay MTA. |
+| `hardening_postfix_relayhost` | `smtp.example.com` | The external SMTP server to relay emails to. |
+| `hardening_postfix_mailname` | `{{ ansible_fqdn }}` | The system's mail name (FQDN). |
+| `hardening_postfix_root_recipient` | `admin@example.com` | Email address to receive root's mail. |
+| `hardening_postfix_sasl_enable` | `false` | Enables SMTP authentication (SASL). |
+| `hardening_postfix_sasl_user` | `""` | Username for SMTP authentication. |
+| `hardening_postfix_sasl_password` | `""` | Password for SMTP authentication. |
+| `hardening_postfix_tls_enable` | `true` | Enables TLS for Postfix. |
+| `hardening_postfix_tls_security_level` | `encrypt` | TLS security level (encrypt, may, none). |
+| `hardening_postfix_tls_ca_file` | `/etc/ssl/certs/ca-certificates.crt` | Path to CA certificates file. |
 
 ## 🔑 SSH Key Management
 

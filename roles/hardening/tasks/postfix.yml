@@ -1,0 +1,76 @@
+---
+- name: Pre-configure Postfix debconf
+  ansible.builtin.debconf:
+    name: postfix
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype }}"
+  loop:
+    - { question: 'postfix/main_mailer_type', value: 'Satellite system', vtype: 'select' }
+    - { question: 'postfix/mailname', value: '{{ hardening_postfix_mailname }}', vtype: 'string' }
+    - { question: 'postfix/relayhost', value: '{{ hardening_postfix_relayhost }}', vtype: 'string' }
+  when: hardening_postfix_enable | bool
+
+- name: Install Postfix and Mailutils
+  ansible.builtin.apt:
+    name:
+      - postfix
+      - mailutils
+      - libsasl2-modules
+      - ca-certificates
+    state: present
+  when: hardening_postfix_enable | bool
+
+- name: Configure Postfix main.cf
+  ansible.builtin.lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    notify: Restart Postfix
+  loop:
+    - { regexp: '^relayhost', line: 'relayhost = {{ hardening_postfix_relayhost }}' }
+    - { regexp: '^myhostname', line: 'myhostname = {{ hardening_postfix_mailname }}' }
+    - { regexp: '^inet_interfaces', line: 'inet_interfaces = loopback-only' }
+    - { regexp: '^mydestination', line: 'mydestination = $myhostname, localhost.$mydomain, localhost' }
+    - { regexp: '^smtp_tls_security_level', line: 'smtp_tls_security_level = {{ hardening_postfix_tls_security_level }}' }
+    - { regexp: '^smtp_tls_CAfile', line: 'smtp_tls_CAfile = {{ hardening_postfix_tls_ca_file }}' }
+    - { regexp: '^smtp_tls_session_cache_database', line: 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache' }
+    - { regexp: '^smtp_use_tls', line: 'smtp_use_tls = yes' }
+  when:
+    - hardening_postfix_enable | bool
+    - hardening_postfix_tls_enable | bool
+
+- name: Configure Postfix SASL Auth
+  ansible.builtin.lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    notify: Restart Postfix
+  loop:
+    - { regexp: '^smtp_sasl_auth_enable', line: 'smtp_sasl_auth_enable = yes' }
+    - { regexp: '^smtp_sasl_password_maps', line: 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd' }
+    - { regexp: '^smtp_sasl_security_options', line: 'smtp_sasl_security_options = noanonymous' }
+    - { regexp: '^smtp_tls_security_level', line: 'smtp_tls_security_level = encrypt' }
+  when:
+    - hardening_postfix_enable | bool
+    - hardening_postfix_sasl_enable | bool
+
+- name: Create SASL password file
+  ansible.builtin.copy:
+    dest: /etc/postfix/sasl_passwd
+    content: "{{ hardening_postfix_relayhost }} {{ hardening_postfix_sasl_user }}:{{ hardening_postfix_sasl_password }}"
+    mode: '0600'
+  notify:
+    - Postmap SASL
+    - Restart Postfix
+  when:
+    - hardening_postfix_enable | bool
+    - hardening_postfix_sasl_enable | bool
+
+- name: Configure root alias
+  ansible.builtin.lineinfile:
+    path: /etc/aliases
+    regexp: '^root:'
+    line: "root: {{ hardening_postfix_root_recipient }}"
+  notify: Update Aliases
+  when: hardening_postfix_enable | bool

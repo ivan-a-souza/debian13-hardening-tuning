@@ -3,3 +3,19 @@
   ansible.builtin.service:
     name: ssh
     state: restarted
+
+- name: Restart Fail2Ban
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted
+
+- name: Restart Postfix
+  ansible.builtin.service:
+    name: postfix
+    state: restarted
+
+- name: Update Aliases
+  ansible.builtin.command: newaliases
+
+- name: Postmap SASL
+  ansible.builtin.command: postmap /etc/postfix/sasl_passwd

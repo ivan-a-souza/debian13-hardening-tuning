@@ -27,3 +27,24 @@ hardening_user_name: "admin_user"
 hardening_user_password: "" # Must be a password hash
 hardening_sudo_require_password: true
 hardening_user_ssh_key_path: "ssh/id_ed25519.pub"
+
+# Fail2Ban
+hardening_fail2ban_enable: true
+hardening_fail2ban_maxretry: 3
+hardening_fail2ban_findtime: "1h"
+hardening_fail2ban_bantime: "10m"
+hardening_fail2ban_email_enable: false
+hardening_fail2ban_dest_email: "root@localhost"
+hardening_fail2ban_sender_email: "fail2ban@{{ ansible_hostname }}"
+
+# Postfix MTA
+hardening_postfix_enable: true
+hardening_postfix_relayhost: "smtp.example.com"
+hardening_postfix_mailname: "{{ ansible_fqdn }}"
+hardening_postfix_root_recipient: "admin@example.com"
+hardening_postfix_sasl_enable: false
+hardening_postfix_sasl_user: ""
+hardening_postfix_sasl_password: ""
+hardening_postfix_tls_enable: true
+hardening_postfix_tls_security_level: "encrypt"
+hardening_postfix_tls_ca_file: "/etc/ssl/certs/ca-certificates.crt"

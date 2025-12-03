@@ -13,3 +13,9 @@
 
 - name: Configure Unattended Upgrades
   ansible.builtin.include_tasks: unattended_upgrades.yml
+
+- name: Configure Fail2Ban
+  ansible.builtin.include_tasks: fail2ban.yml
+
+- name: Configure Postfix MTA
+  ansible.builtin.include_tasks: postfix.yml
