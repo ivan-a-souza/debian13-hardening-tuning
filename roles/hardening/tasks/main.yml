@@ -19,3 +19,6 @@
 
 - name: Configure Postfix MTA
   ansible.builtin.include_tasks: postfix.yml
+
+- name: Configure Sysctl Hardening
+  ansible.builtin.include_tasks: sysctl.yml

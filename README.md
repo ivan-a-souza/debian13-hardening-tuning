@@ -62,6 +62,8 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_postfix_tls_enable` | `true` | Enables TLS for Postfix. |
 | `hardening_postfix_tls_security_level` | `encrypt` | TLS security level (encrypt, may, none). |
 | `hardening_postfix_tls_ca_file` | `/etc/ssl/certs/ca-certificates.crt` | Path to CA certificates file. |
+| `hardening_sysctl_enable` | `true` | Enables kernel hardening via sysctl. |
+| `hardening_sysctl_settings` | `{...}` | Dictionary of sysctl parameters (see defaults for full list). |
 
 ## 🔑 SSH Key Management
 
@@ -86,7 +88,7 @@ To securely manage SSH keys for the new user:
     - [x] SSH Configuration (disable root, change port, keys only).
     - [x] Firewall (UFW/NFTables).
     - [x] Automatic Updates (unattended-upgrades).
-    - [ ] Kernel Configurations (sysctl).
+    - [x] Kernel Configurations (sysctl).
 - [ ] Creation of Tuning roles:
     - [ ] I/O Optimization.
     - [ ] Network Optimization.

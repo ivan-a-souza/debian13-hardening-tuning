@@ -48,3 +48,43 @@ hardening_postfix_sasl_password: ""
 hardening_postfix_tls_enable: true
 hardening_postfix_tls_security_level: "encrypt"
 hardening_postfix_tls_ca_file: "/etc/ssl/certs/ca-certificates.crt"
+
+# Sysctl Hardening
+hardening_sysctl_enable: true
+hardening_sysctl_settings:
+  # IP Spoofing protection
+  "net.ipv4.conf.all.rp_filter": 1
+  "net.ipv4.conf.default.rp_filter": 1
+  # Ignore ICMP broadcast requests
+  "net.ipv4.icmp_echo_ignore_broadcasts": 1
+  # Disable source packet routing
+  "net.ipv4.conf.all.accept_source_route": 0
+  "net.ipv6.conf.all.accept_source_route": 0
+  "net.ipv4.conf.default.accept_source_route": 0
+  "net.ipv6.conf.default.accept_source_route": 0
+  # Ignore send redirects
+  "net.ipv4.conf.all.send_redirects": 0
+  "net.ipv4.conf.default.send_redirects": 0
+  # Block SYN attacks
+  "net.ipv4.tcp_syncookies": 1
+  "net.ipv4.tcp_max_syn_backlog": 2048
+  "net.ipv4.tcp_synack_retries": 2
+  "net.ipv4.tcp_syn_retries": 5
+  # Log Martians
+  "net.ipv4.conf.all.log_martians": 1
+  "net.ipv4.conf.default.log_martians": 1
+  # Ignore ICMP redirects
+  "net.ipv4.conf.all.accept_redirects": 0
+  "net.ipv6.conf.all.accept_redirects": 0
+  "net.ipv4.conf.default.accept_redirects": 0
+  "net.ipv6.conf.default.accept_redirects": 0
+  # Ignore Secure Redirects
+  "net.ipv4.conf.all.secure_redirects": 0
+  "net.ipv4.conf.default.secure_redirects": 0
+  # Disable IP Forwarding (Enable if using Docker/Router)
+  "net.ipv4.ip_forward": 0
+  "net.ipv6.conf.all.forwarding": 0
+  # Kernel Self Protection
+  "kernel.randomize_va_space": 2
+  "fs.suid_dumpable": 0
+  "kernel.sysrq": 0
