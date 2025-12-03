@@ -1,4 +1,7 @@
 ---
+- name: User Management
+  ansible.builtin.include_tasks: users.yml
+
 - name: System Updates
   ansible.builtin.include_tasks: updates.yml
 

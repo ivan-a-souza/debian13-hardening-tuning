@@ -1,0 +1,49 @@
+---
+- name: Ensure password is provided if user creation is enabled
+  ansible.builtin.fail:
+    msg: "You must provide a password hash in 'hardening_user_password' when 'hardening_user_create' is enabled."
+  when:
+    - hardening_user_create | bool
+    - hardening_user_password | length == 0
+
+- name: Create sudo user
+  ansible.builtin.user:
+    name: "{{ hardening_user_name }}"
+    password: "{{ hardening_user_password }}"
+    groups: sudo
+    append: true
+    shell: /bin/bash
+    state: present
+  when: hardening_user_create | bool
+
+- name: Ensure .ssh directory exists
+  ansible.builtin.file:
+    path: "/home/{{ hardening_user_name }}/.ssh"
+    state: directory
+    owner: "{{ hardening_user_name }}"
+    group: "{{ hardening_user_name }}"
+    mode: '0700'
+  when: hardening_user_create | bool
+
+- name: Add authorized key
+  ansible.posix.authorized_key:
+    user: "{{ hardening_user_name }}"
+    state: present
+    key: "{{ lookup('file', hardening_user_ssh_key_path) }}"
+  when: hardening_user_create | bool
+
+- name: Ensure authorized_keys has correct permissions
+  ansible.builtin.file:
+    path: "/home/{{ hardening_user_name }}/.ssh/authorized_keys"
+    owner: "{{ hardening_user_name }}"
+    group: "{{ hardening_user_name }}"
+    mode: '0600'
+  when: hardening_user_create | bool
+
+- name: Ensure sudo group requires password
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL:ALL) ALL'
+    validate: 'visudo -cf %s'
+  when: hardening_sudo_require_password | bool

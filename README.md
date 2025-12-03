@@ -37,6 +37,27 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_ssh_port` | `2222` | The new SSH port to use (requires `hardening_ssh_configure_port: true`). |
 | `hardening_firewall_enable` | `true` | Installs UFW, allows SSH port, and enables the firewall. |
 | `hardening_unattended_upgrades_enable` | `true` | Installs and configures unattended-upgrades for automatic security updates. |
+| `hardening_user_create` | `false` | Creates a new user with sudo privileges. |
+| `hardening_user_name` | `admin_user` | Username for the new user. |
+| `hardening_user_password` | `""` | Password hash for the new user (Required if create is true). |
+| `hardening_sudo_require_password` | `true` | Ensures sudo requires a password (`%sudo ALL=(ALL:ALL) ALL`). |
+| `hardening_user_ssh_key_path` | `ssh/id_ed25519.pub` | Path to the public key to be added to the user's authorized_keys. |
+
+## 🔑 SSH Key Management
+
+To securely manage SSH keys for the new user:
+
+1. **Generate a new key pair** inside the `ssh/` directory (this directory is ignored by git):
+    ```bash
+    mkdir -p ssh
+    ssh-keygen -t ed25519 -f ssh/id_ed25519 -C "admin_user"
+    ```
+
+2. **Configure the playbook** to use this key:
+    - Ensure `hardening_user_ssh_key_path` points to your public key (default is `ssh/id_ed25519.pub`).
+    - Enable user creation: `hardening_user_create: true`.
+
+3. **Run the playbook**: The public key will be automatically added to the user's `authorized_keys` with correct permissions (`0700` for `.ssh` directory).
 
 ## 🚀 Roadmap
 
