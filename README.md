@@ -65,6 +65,14 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_sysctl_enable` | `true` | Enables kernel hardening via sysctl. |
 | `hardening_sysctl_settings` | `{...}` | Dictionary of sysctl parameters (see defaults for full list). |
 | `hardening_permissions_enable` | `true` | Enforces secure permissions on critical system files and directories. |
+| `hardening_auditd_enable` | `true` | Installs and configures Auditd with security rules. |
+| `hardening_auditd_max_log_file` | `8` | Max size of audit log file in MB. |
+| `hardening_auditd_num_logs` | `5` | Number of rotated logs to keep. |
+| `hardening_auditd_max_log_file_action` | `keep_logs` | Action when max log size reached (rotate). |
+| `hardening_fluentbit_enable` | `false` | Installs Fluent Bit for log shipping. |
+| `hardening_fluentbit_s3_bucket` | `my-audit-logs` | S3 bucket name for logs. |
+| `hardening_fluentbit_s3_region` | `us-east-1` | AWS region for S3 bucket. |
+| `hardening_fluentbit_s3_endpoint` | `""` | Custom S3 endpoint (e.g. for Backblaze/MinIO). |
 
 ## 🔑 SSH Key Management
 
@@ -93,6 +101,8 @@ To securely manage SSH keys for the new user:
     - [x] Intrusion Prevention (Fail2Ban).
     - [x] Mail Transfer Agent (Postfix).
     - [x] File System Permissions.
+    - [x] System Auditing (Auditd).
+    - [x] Log Shipping (Fluent Bit + S3).
 - [ ] Creation of Tuning roles:
     - [ ] I/O Optimization.
     - [ ] Network Optimization.

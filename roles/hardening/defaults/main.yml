@@ -91,3 +91,23 @@ hardening_sysctl_settings:
 
 # File Permissions
 hardening_permissions_enable: true
+
+# Auditd
+hardening_auditd_enable: true
+hardening_auditd_rules_file: "audit.rules.j2"
+hardening_auditd_max_log_file: 8
+hardening_auditd_num_logs: 5
+hardening_auditd_max_log_file_action: "keep_logs"
+hardening_auditd_space_left_action: "email"
+hardening_auditd_action_mail_acct: "root"
+hardening_auditd_admin_space_left_action: "halt"
+
+# Fluent Bit (Log Shipping)
+hardening_fluentbit_enable: false
+hardening_fluentbit_s3_bucket: "my-audit-logs"
+hardening_fluentbit_s3_region: "us-east-1"
+hardening_fluentbit_s3_endpoint: ""
+hardening_fluentbit_s3_prefix: "audit-logs"
+hardening_fluentbit_aws_access_key: ""
+hardening_fluentbit_aws_access_key: ""
+hardening_fluentbit_aws_secret_key: ""

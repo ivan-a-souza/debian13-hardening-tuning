@@ -19,3 +19,14 @@
 
 - name: Postmap SASL
   ansible.builtin.command: postmap /etc/postfix/sasl_passwd
+
+- name: Restart Auditd
+  ansible.builtin.service:
+    name: auditd
+    state: restarted
+    use: service
+
+- name: Restart Fluent Bit
+  ansible.builtin.service:
+    name: fluent-bit
+    state: restarted

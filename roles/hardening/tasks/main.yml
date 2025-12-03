@@ -25,3 +25,9 @@
 
 - name: Configure File Permissions
   ansible.builtin.include_tasks: permissions.yml
+
+- name: Configure Auditd
+  ansible.builtin.include_tasks: auditd.yml
+
+- name: Configure Fluent Bit
+  ansible.builtin.include_tasks: fluentbit.yml

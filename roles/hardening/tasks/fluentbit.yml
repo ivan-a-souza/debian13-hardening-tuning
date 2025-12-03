@@ -1,0 +1,53 @@
+---
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - gpg
+      - curl
+    state: present
+  when: hardening_fluentbit_enable | bool
+
+- name: Add Fluent Bit GPG key
+  ansible.builtin.get_url:
+    url: https://packages.fluentbit.io/fluentbit.key
+    dest: /usr/share/keyrings/fluentbit-keyring.gpg
+    mode: '0644'
+  when: hardening_fluentbit_enable | bool
+
+- name: Add Fluent Bit Repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/fluentbit-keyring.gpg] https://packages.fluentbit.io/debian/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+    state: present
+    filename: fluent-bit
+  when: hardening_fluentbit_enable | bool
+
+- name: Install Fluent Bit
+  ansible.builtin.apt:
+    name: fluent-bit
+    state: present
+    update_cache: true
+  when: hardening_fluentbit_enable | bool
+
+- name: Add fluent-bit user to adm group
+  ansible.builtin.user:
+    name: fluent-bit
+    groups: adm
+    append: true
+  when: hardening_fluentbit_enable | bool
+
+- name: Configure Fluent Bit
+  ansible.builtin.template:
+    src: fluent-bit.conf.j2
+    dest: /etc/fluent-bit/fluent-bit.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Fluent Bit
+  when: hardening_fluentbit_enable | bool
+
+- name: Enable and Start Fluent Bit
+  ansible.builtin.service:
+    name: fluent-bit
+    state: started
+    enabled: true
+  when: hardening_fluentbit_enable | bool

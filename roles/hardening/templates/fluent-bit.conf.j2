@@ -1,0 +1,35 @@
+[SERVICE]
+    Flush        1
+    Daemon       Off
+    Log_Level    info
+    Parsers_File parsers.conf
+    Plugins_File plugins.conf
+    HTTP_Server  Off
+    HTTP_Listen  0.0.0.0
+    HTTP_Port    2020
+
+[INPUT]
+    Name        tail
+    Path        /var/log/audit/audit.log
+    Tag         audit.log
+    Parser      json
+    DB          /var/lib/fluent-bit/audit.db
+    Mem_Buf_Limit 5MB
+    Skip_Long_Lines On
+
+[OUTPUT]
+    Name                         s3
+    Match                        audit.log
+    bucket                       {{ hardening_fluentbit_s3_bucket }}
+    region                       {{ hardening_fluentbit_s3_region }}
+    {% if hardening_fluentbit_s3_endpoint != "" %}
+    endpoint                     {{ hardening_fluentbit_s3_endpoint }}
+    {% endif %}
+    total_file_size              10M
+    upload_timeout               1m
+    use_put_object               On
+    s3_key_format                /{{ hardening_fluentbit_s3_prefix }}/%Y/%m/%d/%H/%M/%S
+    {% if hardening_fluentbit_aws_access_key != "" %}
+    aws_access_key_id            {{ hardening_fluentbit_aws_access_key }}
+    aws_secret_access_key        {{ hardening_fluentbit_aws_secret_key }}
+    {% endif %}

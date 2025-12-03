@@ -1,0 +1,35 @@
+---
+- name: Install Auditd
+  ansible.builtin.apt:
+    name:
+      - auditd
+      - audispd-plugins
+    state: present
+  when: hardening_auditd_enable | bool
+
+- name: Configure Auditd Rules
+  ansible.builtin.template:
+    src: "{{ hardening_auditd_rules_file }}"
+    dest: /etc/audit/rules.d/audit.rules
+    owner: root
+    group: root
+    mode: '0640'
+  notify: Restart Auditd
+  when: hardening_auditd_enable | bool
+
+- name: Configure Auditd Daemon
+  ansible.builtin.template:
+    src: auditd.conf.j2
+    dest: /etc/audit/auditd.conf
+    owner: root
+    group: root
+    mode: '0640'
+  notify: Restart Auditd
+  when: hardening_auditd_enable | bool
+
+- name: Enable and Start Auditd
+  ansible.builtin.service:
+    name: auditd
+    state: started
+    enabled: true
+  when: hardening_auditd_enable | bool
