@@ -24,17 +24,29 @@ This playbook is specifically focused on:
 - SSH access to the target server(s) running Debian 13.
 - Root or sudo privileges on the target server.
 
+## ⚙️ Configuration
+
+You can customize the playbook behavior using the following variables in `roles/hardening/defaults/main.yml` or your inventory variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `hardening_update_packages` | `true` | Updates all system packages and cleans up unused dependencies. |
+| `hardening_ssh_disable_root` | `true` | Disables SSH root login (`PermitRootLogin no`). |
+| `hardening_ssh_disable_password` | `true` | Disables password authentication (`PasswordAuthentication no`). |
+| `hardening_ssh_configure_port` | `false` | Enables changing the SSH port. |
+| `hardening_ssh_port` | `2222` | The new SSH port to use (requires `hardening_ssh_configure_port: true`). |
+
 ## 🚀 Roadmap
 
-- [ ] Initial project setup (directory structure, inventory).
+- [x] Initial project setup (directory structure, inventory).
 - [ ] Creation of Hardening roles:
-    - [ ] SSH Configuration (disable root, change port, keys only).
+    - [x] Configuração de SSH (desabilitar root, alterar porta, chaves apenas).
     - [ ] Firewall (UFW/NFTables).
-    - [ ] Automatic Updates (unattended-upgrades).
-    - [ ] Kernel Configurations (sysctl).
+    - [x] Atualizações automáticas (unattended-upgrades) - *Partially implemented (manual update task)*.
+    - [ ] Configurações de Kernel (sysctl).
 - [ ] Creation of Tuning roles:
-    - [ ] I/O Optimization.
-    - [ ] Network Optimization.
+    - [ ] Otimização de I/O.
+    - [ ] Otimização de Rede.
 - [ ] Tests and Validation.
 
 ## 🛠️ How to Execute
