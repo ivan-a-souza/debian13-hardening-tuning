@@ -1,0 +1,8 @@
+---
+- name: Update all packages
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+    autoclean: true
+    autoremove: true
+  when: hardening_update_packages | bool

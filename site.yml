@@ -1,0 +1,6 @@
+---
+- name: Debian 13 Hardening & Tuning
+  hosts: all
+  become: true
+  roles:
+    - hardening

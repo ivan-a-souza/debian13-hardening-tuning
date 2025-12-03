@@ -1,0 +1,50 @@
+---
+- name: Disable SSH Root Login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+  when: hardening_ssh_disable_root | bool
+
+- name: Disable SSH Password Authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+  when: hardening_ssh_disable_password | bool
+
+- name: Enable SSH Public Key Authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PubkeyAuthentication'
+    line: 'PubkeyAuthentication yes'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+  when: hardening_ssh_disable_password | bool
+
+- name: Disable SSH Challenge Response Authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ChallengeResponseAuthentication'
+    line: 'ChallengeResponseAuthentication no'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+  when: hardening_ssh_disable_password | bool
+
+- name: Configure SSH Port
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Port'
+    line: "Port {{ hardening_ssh_port }}"
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+  when: hardening_ssh_configure_port | bool

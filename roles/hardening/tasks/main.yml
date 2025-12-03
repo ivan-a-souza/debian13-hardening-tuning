@@ -1,0 +1,6 @@
+---
+- name: System Updates
+  ansible.builtin.include_tasks: updates.yml
+
+- name: Configure SSH Hardening
+  ansible.builtin.include_tasks: ssh.yml
