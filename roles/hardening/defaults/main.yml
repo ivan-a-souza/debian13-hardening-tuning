@@ -18,6 +18,8 @@ hardening_firewall_enable: true
 
 # Unattended Upgrades
 hardening_unattended_upgrades_enable: true
+hardening_unattended_automatic_reboot: false
+hardening_unattended_automatic_reboot_time: "02:00"
 
 # User Management
 hardening_user_create: false

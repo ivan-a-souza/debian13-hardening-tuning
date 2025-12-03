@@ -40,6 +40,8 @@ You can customize the playbook behavior using the following variables in `roles/
 | `hardening_ssh_max_auth_tries` | `3` | Maximum number of authentication attempts. |
 | `hardening_firewall_enable` | `true` | Installs UFW, allows SSH port, and enables the firewall. |
 | `hardening_unattended_upgrades_enable` | `true` | Installs and configures unattended-upgrades for automatic security updates. |
+| `hardening_unattended_automatic_reboot` | `false` | Enables automatic reboot after updates if required. |
+| `hardening_unattended_automatic_reboot_time` | `02:00` | Time to perform the automatic reboot (if enabled). |
 | `hardening_user_create` | `false` | Creates a new user with sudo privileges. |
 | `hardening_user_name` | `admin_user` | Username for the new user. |
 | `hardening_user_password` | `""` | Password hash for the new user (Required if create is true). |

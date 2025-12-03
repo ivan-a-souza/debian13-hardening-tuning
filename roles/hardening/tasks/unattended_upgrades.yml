@@ -13,6 +13,7 @@
     content: |
       APT::Periodic::Update-Package-Lists "1";
       APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::AutocleanInterval "7";
     mode: '0644'
   when: hardening_unattended_upgrades_enable | bool
 
@@ -28,5 +29,7 @@
       };
       Unattended-Upgrade::AutoFixInterruptedDpkg "true";
       Unattended-Upgrade::MinimalSteps "true";
+      Unattended-Upgrade::Automatic-Reboot "{{ hardening_unattended_automatic_reboot | bool | lower }}";
+      Unattended-Upgrade::Automatic-Reboot-Time "{{ hardening_unattended_automatic_reboot_time }}";
     mode: '0644'
   when: hardening_unattended_upgrades_enable | bool
