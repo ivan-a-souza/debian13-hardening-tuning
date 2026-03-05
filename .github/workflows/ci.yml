@@ -28,6 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install ansible
+        pip install -r requirements-dev.txt
         ansible-galaxy collection install community.general ansible.posix
     - name: Run check mode
       run: |
