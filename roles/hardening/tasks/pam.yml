@@ -10,7 +10,7 @@
     path: /etc/security/pwquality.conf
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
-    create: yes
+    create: true
     owner: root
     group: root
     mode: '0644'
@@ -27,7 +27,7 @@
     path: /etc/security/faillock.conf
     regexp: "^{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
-    create: yes
+    create: true
     owner: root
     group: root
     mode: '0644'

@@ -87,6 +87,7 @@
   when: (hardening_ssh_allow_users | length > 0) or hardening_user_create
 
 - name: Enforce Strong SSH Crypto
+  when: hardening_ssh_strong_crypto | bool
   block:
     - name: Set Strong KEX Algorithms
       ansible.builtin.lineinfile:
@@ -122,4 +123,3 @@
         state: absent
         validate: 'sshd -t -f %s'
       notify: Restart SSH
-  when: hardening_ssh_strong_crypto | bool
