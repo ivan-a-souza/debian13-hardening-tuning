@@ -1,4 +1,4 @@
 molecule>=6.0.0
 molecule-docker>=2.1.0
-testinfra>=8.5.0
+pytest-testinfra>=10.0.0
 pytest
