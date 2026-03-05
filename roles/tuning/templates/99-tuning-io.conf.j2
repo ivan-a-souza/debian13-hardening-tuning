@@ -1,0 +1,3 @@
+# Managed by Ansible - I/O & memory tuning
+{% for key, value in tuning_sysctl_io_settings.items() %}{{ key }} = {{ value }}
+{% endfor %}

@@ -1,0 +1,37 @@
+---
+- name: Install PAM password quality library
+  ansible.builtin.package:
+    name: libpam-pwquality
+    state: present
+  when: hardening_pam_enable | bool
+
+- name: Configure Password Quality (pwquality.conf)
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: "^{{ item.key }} ="
+    line: "{{ item.key }} = {{ item.value }}"
+    create: yes
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - { key: 'minlen', value: "{{ hardening_pam_pwquality_minlen }}" }
+    - { key: 'dcredit', value: "{{ hardening_pam_pwquality_dcredit }}" }
+    - { key: 'ucredit', value: "{{ hardening_pam_pwquality_ucredit }}" }
+    - { key: 'ocredit', value: "{{ hardening_pam_pwquality_ocredit }}" }
+    - { key: 'lcredit', value: "{{ hardening_pam_pwquality_lcredit }}" }
+  when: hardening_pam_enable | bool
+
+- name: Configure Account Lockout (faillock.conf)
+  ansible.builtin.lineinfile:
+    path: /etc/security/faillock.conf
+    regexp: "^{{ item.key }} ="
+    line: "{{ item.key }} = {{ item.value }}"
+    create: yes
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - { key: 'deny', value: "{{ hardening_pam_faillock_deny }}" }
+    - { key: 'unlock_time', value: "{{ hardening_pam_faillock_unlock_time }}" }
+  when: hardening_pam_enable | bool

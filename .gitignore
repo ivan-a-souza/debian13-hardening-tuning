@@ -1,1 +1,14 @@
 ssh/
+# Molecule and testing
+.molecule/
+.cache/
+.pytest_cache/
+__pycache__/
+*.pyc
+# Python virtual environments
+venv/
+.venv/
+# Local inventory
+inventory/local/
+# Ansible retry files
+*.retry

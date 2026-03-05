@@ -1,33 +1,111 @@
 ---
+- name: Banners Management
+  ansible.builtin.include_tasks: banners.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+
+- name: Configure Firewall (First to avoid lockout)
+  ansible.builtin.include_tasks: firewall.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_firewall_enable | bool
+
+- name: PAM and Password Policy
+  ansible.builtin.include_tasks: pam.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+
+- name: Cron Hardening
+  ansible.builtin.include_tasks: cron.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_cron_enable | bool
+
+- name: Kernel Module Hardening
+  ansible.builtin.include_tasks: modules.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_modules_enable | bool
+
+- name: FSTAB Hardening
+  ansible.builtin.include_tasks: fstab.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+
 - name: User Management
   ansible.builtin.include_tasks: users.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_users_enable | bool
 
 - name: System Updates
   ansible.builtin.include_tasks: updates.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_updates_enable | bool
 
 - name: Configure SSH Hardening
   ansible.builtin.include_tasks: ssh.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_ssh_enable | bool
 
 - name: Configure Firewall
   ansible.builtin.include_tasks: firewall.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_firewall_enable | bool
 
 - name: Configure Unattended Upgrades
   ansible.builtin.include_tasks: unattended_upgrades.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_unattended_upgrades_enable | bool
 
 - name: Configure Fail2Ban
   ansible.builtin.include_tasks: fail2ban.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_fail2ban_enable | bool
 
 - name: Configure Postfix MTA
   ansible.builtin.include_tasks: postfix.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_postfix_enable | bool
 
 - name: Configure Sysctl Hardening
   ansible.builtin.include_tasks: sysctl.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_sysctl_enable | bool
 
 - name: Configure File Permissions
   ansible.builtin.include_tasks: permissions.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_permissions_enable | bool
 
 - name: Configure Auditd
   ansible.builtin.include_tasks: auditd.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_auditd_enable | bool
 
 - name: Configure Fluent Bit
   ansible.builtin.include_tasks: fluentbit.yml
+  apply:
+    check_mode: "{{ hardening_mode == 'audit' }}"
+  when: hardening_fluentbit_enable | bool
+
+- name: Final SSH Connection Check
+  ansible.builtin.wait_for:
+    port: "{{ hardening_ssh_port }}"
+    host: "{{ ansible_host | default(inventory_hostname) }}"
+    search_regex: OpenSSH
+    timeout: 10
+  delegate_to: localhost
+  become: false
+  when: 
+    - hardening_ssh_enable | bool
+    - hardening_mode != 'audit'

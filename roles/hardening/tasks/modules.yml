@@ -1,0 +1,37 @@
+---
+- name: Disable Legacy Filesystems
+  ansible.builtin.copy:
+    content: |
+      install freevxfs /bin/true
+      install jffs2 /bin/true
+      install hfs /bin/true
+      install hfsplus /bin/true
+      install squashfs /bin/true
+      install udf /bin/true
+    dest: /etc/modprobe.d/legacy_fs.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: hardening_modules_disable_legacy_fs | bool
+
+- name: Disable Uncommon Network Protocols
+  ansible.builtin.copy:
+    content: |
+      install dccp /bin/true
+      install sctp /bin/true
+      install rds /bin/true
+      install tipc /bin/true
+    dest: /etc/modprobe.d/legacy_net.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: hardening_modules_disable_uncommon_net | bool
+
+- name: Disable USB Storage
+  ansible.builtin.copy:
+    content: "install usb-storage /bin/true"
+    dest: /etc/modprobe.d/usb-storage.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: hardening_modules_disable_usb_storage | bool

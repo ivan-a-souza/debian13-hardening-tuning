@@ -1,0 +1,3 @@
+# Managed by Ansible - Network tuning
+{% for key, value in tuning_sysctl_network_settings.items() %}{{ key }} = {{ value }}
+{% endfor %}

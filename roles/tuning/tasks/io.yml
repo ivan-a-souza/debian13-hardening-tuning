@@ -1,0 +1,18 @@
+---
+- name: Ensure sysctl tuning directory exists
+  ansible.builtin.file:
+    path: /etc/sysctl.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy I/O tuning sysctl config
+  ansible.builtin.template:
+    src: 99-tuning-io.conf.j2
+    dest: /etc/sysctl.d/99-tuning-io.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: tuning_sysctl_io_settings | length > 0
+  notify: Reload sysctl

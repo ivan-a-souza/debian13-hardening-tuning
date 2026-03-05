@@ -1,0 +1,42 @@
+---
+- name: Restrict Cron to allowed users
+  ansible.builtin.template:
+    src: cron.allow.j2
+    dest: /etc/cron.allow
+    owner: root
+    group: root
+    mode: '0600'
+  when: hardening_cron_enable | bool
+
+- name: Restrict At to allowed users
+  ansible.builtin.template:
+    src: cron.allow.j2
+    dest: /etc/at.allow
+    owner: root
+    group: root
+    mode: '0600'
+  when: hardening_cron_enable | bool
+
+- name: Remove cron.deny and at.deny
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/cron.deny
+    - /etc/at.deny
+  when: hardening_cron_enable | bool
+
+- name: Secure Cron directories permissions
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0700'
+  loop:
+    - /etc/cron.d
+    - /etc/cron.daily
+    - /etc/cron.hourly
+    - /etc/cron.monthly
+    - /etc/cron.weekly
+    - /etc/crontab
+  when: hardening_cron_enable | bool

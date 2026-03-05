@@ -85,3 +85,41 @@
     validate: 'sshd -t -f %s'
   notify: Restart SSH
   when: (hardening_ssh_allow_users | length > 0) or hardening_user_create
+
+- name: Enforce Strong SSH Crypto
+  block:
+    - name: Set Strong KEX Algorithms
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^KexAlgorithms'
+        line: 'KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
+        state: present
+        validate: 'sshd -t -f %s'
+      notify: Restart SSH
+
+    - name: Set Strong Ciphers
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^Ciphers'
+        line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
+        state: present
+        validate: 'sshd -t -f %s'
+      notify: Restart SSH
+
+    - name: Set Strong MACs
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^MACs'
+        line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
+        state: present
+        validate: 'sshd -t -f %s'
+      notify: Restart SSH
+
+    - name: Disable Weak HostKeys
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^HostKey /etc/ssh/ssh_host_(dsa|ecdsa)_key'
+        state: absent
+        validate: 'sshd -t -f %s'
+      notify: Restart SSH
+  when: hardening_ssh_strong_crypto | bool

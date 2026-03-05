@@ -1,0 +1,27 @@
+---
+- name: Ensure /tmp is mounted with security options
+  ansible.posix.mount:
+    path: /tmp
+    src: tmpfs
+    fstype: tmpfs
+    opts: "defaults,rw,nosuid,nodev,noexec,relatime,size=1G"
+    state: mounted
+  when: hardening_fstab_tmp_hardened | bool
+
+- name: Secure /var/tmp with bind mount to /tmp
+  ansible.posix.mount:
+    path: /var/tmp
+    src: /tmp
+    fstype: none
+    opts: bind
+    state: mounted
+  when: hardening_fstab_tmp_hardened | bool
+
+- name: Secure /dev/shm with security options
+  ansible.posix.mount:
+    path: /dev/shm
+    src: tmpfs
+    fstype: tmpfs
+    opts: "defaults,rw,nosuid,nodev,noexec"
+    state: mounted
+  when: hardening_fstab_dev_shm_hardened | bool

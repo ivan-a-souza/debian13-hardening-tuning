@@ -26,53 +26,27 @@ This playbook is specifically focused on:
 
 ## ⚙️ Configuration
 
-You can customize the playbook behavior using the following variables in `roles/hardening/defaults/main.yml` or your inventory variables:
+You can customize the playbook behavior using the following variables in `roles/hardening/defaults/main.yml`.
 
+### Global Toggles
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `hardening_update_packages` | `true` | Updates all system packages and cleans up unused dependencies. |
-| `hardening_ssh_disable_root` | `true` | Disables SSH root login (`PermitRootLogin no`). |
-| `hardening_ssh_disable_password` | `true` | Disables password authentication (`PasswordAuthentication no`). |
-| `hardening_ssh_configure_port` | `false` | Enables changing the SSH port. |
-| `hardening_ssh_port` | `2222` | The new SSH port to use (requires `hardening_ssh_configure_port: true`). |
-| `hardening_ssh_allow_users` | `[]` | List of users allowed to log in via SSH. Automatically includes `hardening_user_name` if user creation is enabled. |
-| `hardening_ssh_login_grace_time` | `30` | Time in seconds to disconnect if not authenticated. |
-| `hardening_ssh_max_auth_tries` | `3` | Maximum number of authentication attempts. |
-| `hardening_firewall_enable` | `true` | Installs UFW, allows SSH port, and enables the firewall. |
-| `hardening_unattended_upgrades_enable` | `true` | Installs and configures unattended-upgrades for automatic security updates. |
-| `hardening_unattended_automatic_reboot` | `false` | Enables automatic reboot after updates if required. |
-| `hardening_unattended_automatic_reboot_time` | `02:00` | Time to perform the automatic reboot (if enabled). |
-| `hardening_user_create` | `false` | Creates a new user with sudo privileges. |
-| `hardening_user_name` | `admin_user` | Username for the new user. |
-| `hardening_user_password` | `""` | Password hash for the new user (Required if create is true). |
-| `hardening_sudo_require_password` | `true` | Ensures sudo requires a password (`%sudo ALL=(ALL:ALL) ALL`). |
-| `hardening_user_ssh_key_path` | `ssh/id_ed25519.pub` | Path to the public key to be added to the user's authorized_keys. |
-| `hardening_fail2ban_enable` | `true` | Installs and configures Fail2Ban to protect SSH. |
-| `hardening_fail2ban_maxretry` | `3` | Number of failures before banning. |
-| `hardening_fail2ban_findtime` | `1h` | Time window to count failures. |
-| `hardening_fail2ban_bantime` | `10m` | Duration of the ban. |
-| `hardening_fail2ban_email_enable` | `false` | Enables email alerts for bans (requires MTA). |
-| `hardening_postfix_enable` | `true` | Installs and configures Postfix as a relay MTA. |
-| `hardening_postfix_relayhost` | `smtp.example.com` | The external SMTP server to relay emails to. |
-| `hardening_postfix_mailname` | `{{ ansible_fqdn }}` | The system's mail name (FQDN). |
-| `hardening_postfix_root_recipient` | `admin@example.com` | Email address to receive root's mail. |
-| `hardening_postfix_sasl_enable` | `false` | Enables SMTP authentication (SASL). |
-| `hardening_postfix_sasl_user` | `""` | Username for SMTP authentication. |
-| `hardening_postfix_sasl_password` | `""` | Password for SMTP authentication. |
-| `hardening_postfix_tls_enable` | `true` | Enables TLS for Postfix. |
-| `hardening_postfix_tls_security_level` | `encrypt` | TLS security level (encrypt, may, none). |
-| `hardening_postfix_tls_ca_file` | `/etc/ssl/certs/ca-certificates.crt` | Path to CA certificates file. |
-| `hardening_sysctl_enable` | `true` | Enables kernel hardening via sysctl. |
-| `hardening_sysctl_settings` | `{...}` | Dictionary of sysctl parameters (see defaults for full list). |
-| `hardening_permissions_enable` | `true` | Enforces secure permissions on critical system files and directories. |
-| `hardening_auditd_enable` | `true` | Installs and configures Auditd with security rules. |
-| `hardening_auditd_max_log_file` | `8` | Max size of audit log file in MB. |
-| `hardening_auditd_num_logs` | `5` | Number of rotated logs to keep. |
-| `hardening_auditd_max_log_file_action` | `keep_logs` | Action when max log size reached (rotate). |
-| `hardening_fluentbit_enable` | `false` | Installs Fluent Bit for log shipping. |
-| `hardening_fluentbit_s3_bucket` | `my-audit-logs` | S3 bucket name for logs. |
-| `hardening_fluentbit_s3_region` | `us-east-1` | AWS region for S3 bucket. |
-| `hardening_fluentbit_s3_endpoint` | `""` | Custom S3 endpoint (e.g. for Backblaze/MinIO). |
+| `hardening_ssh_enable` | `true` | Enables SSH hardening role. |
+| `hardening_firewall_enable` | `true` | Enables UFW firewall configuration. |
+| `hardening_pam_enable` | `true` | Enables PAM password quality and lockout policies. |
+| `hardening_banners_enable` | `true` | Enables legal login banners (issue, motd). |
+| `hardening_cron_enable` | `true` | Enables cron/at restriction hardening. |
+| `hardening_modules_enable` | `true` | Enables kernel module hardening (legacy FS, uncommon net). |
+
+### Granular Settings (Examples)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `hardening_ssh_port` | `2222` | The new SSH port to use (if `hardening_ssh_configure_port` is true). |
+| `hardening_pam_pwquality_minlen` | `14` | Minimum password length. |
+| `hardening_permissions_logs` | `true` | Enforces 0750 permissions on `/var/log`. |
+| `hardening_modules_disable_usb_storage` | `false` | Disables usb-storage module via modprobe. |
+
+Refer to `roles/hardening/defaults/main.yml` for the full list of ~50 customizable variables.
 
 ## 🔑 SSH Key Management
 
@@ -92,54 +66,41 @@ To securely manage SSH keys for the new user:
 
 ## 🚀 Roadmap
 
-- [x] Initial project setup (directory structure, inventory).
-- [ ] Creation of Hardening roles:
-    - [x] SSH Configuration (disable root, change port, keys only).
-    - [x] Firewall (UFW/NFTables).
-    - [x] Automatic Updates (unattended-upgrades).
-    - [x] Kernel Configurations (sysctl).
-    - [x] Intrusion Prevention (Fail2Ban).
-    - [x] Mail Transfer Agent (Postfix).
-    - [x] File System Permissions.
-    - [x] System Auditing (Auditd).
-    - [x] Log Shipping (Fluent Bit + S3).
-- [ ] Creation of Tuning roles:
-    - [ ] I/O Optimization.
-    - [ ] Network Optimization.
-- [ ] Tests and Validation.
+- [x] Initial project setup.
+- [x] Hardening roles:
+    - [x] SSH Configuration.
+    - [x] Firewall (UFW).
+    - [x] PAM & Password Policies (New).
+    - [x] Login Banners (New).
+    - [x] Cron/Anacron Hardening (New).
+    - [x] Kernel Module Hardening (New).
+    - [x] Sysctl, Auditd, Postfix, Fail2Ban.
+- [x] Tuning roles (I/O & Network).
+- [x] Audit-only mode toggle.
+- [x] CI/CD (GitHub Actions + Molecule Matrix).
 
 ## 🛠️ How to Execute
 
 ### 1. Configure Inventory
-Edit the `inventory/hosts` file (or similar) with the IPs of your servers:
+Edit `inventory/hosts` with your server IPs.
 
-```ini
-[debian_servers]
-192.168.1.10
-192.168.1.11
-```
-
-### 2. Run in Dry-Run Mode (Simulation)
-Always run first in check mode to see what will be changed without applying the changes:
-
+### 2. Run in Audit Mode (Simulation)
 ```bash
-ansible-playbook -i inventory/hosts site.yml --check --diff
+ansible-playbook -i inventory/hosts site.yml -e hardening_mode=audit
 ```
 
-### 3. Run the Playbook
-To apply the configurations:
-
+### 3. Apply Hardening
 ```bash
 ansible-playbook -i inventory/hosts site.yml
 ```
 
-### 4. Using Tags
-You can run only specific parts of the playbook using tags (e.g., only hardening or only ssh):
-
+### 4. Selective Execution (Tags)
 ```bash
-# Run only hardening tasks
-ansible-playbook -i inventory/hosts site.yml --tags "hardening"
+ansible-playbook -i inventory/hosts site.yml --tags "ssh,firewall"
+```
 
-# Run only SSH configuration
-ansible-playbook -i inventory/hosts site.yml --tags "ssh"
+## 🧪 Validation
+```bash
+# Run lint + check-mode
+scripts/test.sh
 ```

@@ -1,0 +1,65 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Install dev dependencies
+      run: pip install -r requirements-dev.txt
+    - name: Run ansible-lint
+      run: ansible-lint .
+  check-mode:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Install ansible
+      run: pip install ansible
+    - name: Run check mode
+      run: ./scripts/test.sh
+  molecule-and-audit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        scenario: [default, debian12]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Install Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker.io
+    - name: Install dependencies
+      run: |
+        pip install -r requirements-test.txt
+        pip install ssh-audit
+    - name: Run Molecule (Apply)
+      run: molecule test -s ${{ matrix.scenario }}
+    - name: Audit SSH Security
+      run: |
+        # Obter o IP do container rodando via Molecule
+        CONTAINER_ID=$(docker ps -q --filter "ancestor=molecule_inventory_${{ matrix.scenario }}")
+        if [ -z "$CONTAINER_ID" ]; then
+          # Caso o molecule pare o container após o teste, subimos um apenas para o audit
+          molecule converge -s ${{ matrix.scenario }}
+          CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q))
+        else
+          CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER_ID)
+        fi
+        # Rodar ssh-audit. Esperamos nota A ou B (devido ao Docker as vezes limitar alguns parâmetros do kernel)
+        ssh-audit --level=warn $CONTAINER_IP

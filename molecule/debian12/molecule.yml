@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: hardening-debian12
+    image: debian:bookworm-slim
+    command: /sbin/init
+    pre_build_image: true
+    privileged: true
+    # network for SSH connectivity
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ../../site.yml
+verifier:
+  name: testinfra
+  options:
+    v: 1

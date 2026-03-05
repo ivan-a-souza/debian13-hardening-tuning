@@ -1,0 +1,27 @@
+---
+- name: Configure Login Banners (/etc/issue)
+  ansible.builtin.copy:
+    content: "{{ hardening_banner_message }}"
+    dest: /etc/issue
+    owner: root
+    group: root
+    mode: '0644'
+  when: hardening_banners_enable | bool
+
+- name: Configure Remote Login Banners (/etc/issue.net)
+  ansible.builtin.copy:
+    content: "{{ hardening_banner_message }}"
+    dest: /etc/issue.net
+    owner: root
+    group: root
+    mode: '0644'
+  when: hardening_banners_enable | bool
+
+- name: Configure MOTD
+  ansible.builtin.copy:
+    content: "{{ hardening_banner_message }}"
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: '0644'
+  when: hardening_banners_enable | bool

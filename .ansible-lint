@@ -1,0 +1,12 @@
+# ansible-lint configuration
+skip_list:
+  - meta-no-info   # not using meta/main.yml per role standard here
+  - experimental   # skip experimental checks
+  - var-naming     # allow current variable naming style
+warn_list:
+  - risky-file-permissions
+exclude_paths:
+  - .venv
+  - venv
+  - .git
+  - ssh

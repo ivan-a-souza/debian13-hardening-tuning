@@ -1,7 +1,45 @@
 ---
 # Defaults for hardening role
 
-# SSH Hardening
+# Mode: apply (default) or audit (simulate changes)
+hardening_mode: "apply"  # options: apply, audit
+
+# --- Global Toggles ---
+hardening_users_enable: true
+hardening_updates_enable: true
+hardening_ssh_enable: true
+hardening_firewall_enable: true
+hardening_unattended_upgrades_enable: true
+hardening_fail2ban_enable: true
+hardening_postfix_enable: true
+hardening_sysctl_enable: true
+hardening_permissions_enable: true
+hardening_auditd_enable: true
+hardening_fluentbit_enable: false
+
+# --- New Granular Toggles ---
+hardening_banners_enable: true
+hardening_pam_enable: true
+hardening_cron_enable: true
+hardening_modules_enable: true
+
+# --- Kernel Modules ---
+hardening_modules_disable_legacy_fs: true
+hardening_modules_disable_uncommon_net: true
+hardening_modules_disable_usb_storage: false
+
+# --- FSTAB Hardening ---
+hardening_fstab_tmp_hardened: true
+hardening_fstab_dev_shm_hardened: true
+
+# --- User Management ---
+hardening_user_create: false
+hardening_user_name: "admin_user"
+hardening_user_password: "" # Must be a password hash
+hardening_sudo_require_password: true
+hardening_user_ssh_key_path: "ssh/id_ed25519.pub"
+
+# --- SSH Hardening ---
 hardening_ssh_disable_root: true
 hardening_ssh_disable_password: true
 hardening_ssh_configure_port: false
@@ -9,27 +47,42 @@ hardening_ssh_port: 2222
 hardening_ssh_allow_users: []
 hardening_ssh_login_grace_time: 30
 hardening_ssh_max_auth_tries: 3
+hardening_ssh_strong_crypto: true
 
-# System Updates
+# --- Banners ---
+hardening_banner_message: |
+  ******************************************************************************
+  *                                                                            *
+  *                       UNAUTHORIZED ACCESS PROHIBITED                       *
+  *                                                                            *
+  *  This system is for the use of authorized users only. Individuals using    *
+  *  this computer system without authority, or in excess of their authority,  *
+  *  are subject to having all of their activities on this system monitored    *
+  *  and recorded by system personnel.                                         *
+  *                                                                            *
+  ******************************************************************************
+
+# --- PAM / Password Quality ---
+hardening_pam_pwquality_minlen: 14
+hardening_pam_pwquality_dcredit: -1
+hardening_pam_pwquality_ucredit: -1
+hardening_pam_pwquality_ocredit: -1
+hardening_pam_pwquality_lcredit: -1
+hardening_pam_faillock_deny: 5
+hardening_pam_faillock_unlock_time: 900
+
+# --- Cron Hardening ---
+hardening_cron_allowed_users:
+  - root
+
+# --- System Updates ---
 hardening_update_packages: true
 
-# Firewall
-hardening_firewall_enable: true
-
-# Unattended Upgrades
-hardening_unattended_upgrades_enable: true
+# --- Unattended Upgrades ---
 hardening_unattended_automatic_reboot: false
 hardening_unattended_automatic_reboot_time: "02:00"
 
-# User Management
-hardening_user_create: false
-hardening_user_name: "admin_user"
-hardening_user_password: "" # Must be a password hash
-hardening_sudo_require_password: true
-hardening_user_ssh_key_path: "ssh/id_ed25519.pub"
-
-# Fail2Ban
-hardening_fail2ban_enable: true
+# --- Fail2Ban ---
 hardening_fail2ban_maxretry: 3
 hardening_fail2ban_findtime: "1h"
 hardening_fail2ban_bantime: "10m"
@@ -37,8 +90,7 @@ hardening_fail2ban_email_enable: false
 hardening_fail2ban_dest_email: "root@localhost"
 hardening_fail2ban_sender_email: "fail2ban@{{ ansible_hostname }}"
 
-# Postfix MTA
-hardening_postfix_enable: true
+# --- Postfix MTA ---
 hardening_postfix_relayhost: "smtp.example.com"
 hardening_postfix_mailname: "{{ ansible_fqdn }}"
 hardening_postfix_root_recipient: "admin@example.com"
@@ -49,8 +101,7 @@ hardening_postfix_tls_enable: true
 hardening_postfix_tls_security_level: "encrypt"
 hardening_postfix_tls_ca_file: "/etc/ssl/certs/ca-certificates.crt"
 
-# Sysctl Hardening
-hardening_sysctl_enable: true
+# --- Sysctl Hardening ---
 hardening_sysctl_settings:
   # IP Spoofing protection
   "net.ipv4.conf.all.rp_filter": 1
@@ -89,11 +140,12 @@ hardening_sysctl_settings:
   "fs.suid_dumpable": 0
   "kernel.sysrq": 0
 
-# File Permissions
-hardening_permissions_enable: true
+# --- File Permissions ---
+hardening_permissions_system_files: true
+hardening_permissions_logs: true
+hardening_permissions_temp: true
 
-# Auditd
-hardening_auditd_enable: true
+# --- Auditd ---
 hardening_auditd_rules_file: "audit.rules.j2"
 hardening_auditd_max_log_file: 8
 hardening_auditd_num_logs: 5
@@ -102,12 +154,10 @@ hardening_auditd_space_left_action: "email"
 hardening_auditd_action_mail_acct: "root"
 hardening_auditd_admin_space_left_action: "halt"
 
-# Fluent Bit (Log Shipping)
-hardening_fluentbit_enable: false
+# --- Fluent Bit (Log Shipping) ---
 hardening_fluentbit_s3_bucket: "my-audit-logs"
 hardening_fluentbit_s3_region: "us-east-1"
 hardening_fluentbit_s3_endpoint: ""
 hardening_fluentbit_s3_prefix: "audit-logs"
-hardening_fluentbit_aws_access_key: ""
 hardening_fluentbit_aws_access_key: ""
 hardening_fluentbit_aws_secret_key: ""

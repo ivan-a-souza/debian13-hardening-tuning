@@ -1,0 +1,22 @@
+---
+- name: Apply I/O tuning
+  ansible.builtin.include_tasks: io.yml
+  when:
+    - tuning_enable | default(true)
+    - tuning_io_enable | default(true)
+  apply:
+    check_mode: "{{ hardening_mode | default('apply') == 'audit' }}"
+  tags:
+    - tuning
+    - tuning_io
+
+- name: Apply Network tuning
+  ansible.builtin.include_tasks: network.yml
+  when:
+    - tuning_enable | default(true)
+    - tuning_network_enable | default(true)
+  apply:
+    check_mode: "{{ hardening_mode | default('apply') == 'audit' }}"
+  tags:
+    - tuning
+    - tuning_network
